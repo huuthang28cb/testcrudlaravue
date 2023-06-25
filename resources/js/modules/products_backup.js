@@ -6,8 +6,10 @@ const productModule = {
     productData: {
       name: '',
       description: '',
-      price: 0
-    }
+      price: 0,
+      errors: {} // Thêm trường errors để chứa thông báo lỗi
+    },
+    isLoading: false // Add a new isLoading property
   },
   mutations: {
     setMessage(state, message){
@@ -21,15 +23,25 @@ const productModule = {
     },
     setProduct(state, product) {
       state.productData = product;
+    },
+    setProductErrors(state, errors) {
+      state.productData.errors = errors;
+    },
+    setLoading(state, isLoading) {
+      state.isLoading = isLoading;
     }
   },
   actions: {
     async fetchProducts({ commit }) {
       try {
+        commit('setLoading', true);
+        await new Promise((resolve) => setTimeout(resolve, 3000));
         const response = await axios.get('/api/products');
         commit('setProducts', response.data);
       } catch (error) {
         console.error(error);
+      } finally {
+        commit('setLoading', false); // Set loading state to false
       }
     },
     async deleteProduct({ commit }, productId) {
@@ -50,11 +62,21 @@ const productModule = {
         console.error(error);
       }
     },
-    async addProduct(_, product) {
+    async addProduct({ commit }, product) {
       try {
-        await axios.post('/api/products', product);
+        commit('setLoading', true);
+        const response = await axios.post('/api/products', product);
+        commit('setMessage', response.data.message);
+        return true;
       } catch (error) {
-        console.error(error);
+        if (error.response && error.response.status === 422) {
+          const errors = error.response.data.errors;
+          commit('setProductErrors', errors);
+        } else {
+          console.error(error);
+        }
+      } finally {
+        commit('setLoading', false); // Set loading state to false
       }
     },
     async updateProduct(_, { productId, product }) {

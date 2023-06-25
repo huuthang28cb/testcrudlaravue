@@ -198,4 +198,6 @@ return [
 
     'same_site' => 'lax',
 
+    'lifetime' => 1, // Thời gian hết hạn của cookie laravel_session (đơn vị: phút), neu muon theo mac dinh thi bo
+
 ];

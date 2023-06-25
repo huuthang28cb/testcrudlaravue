@@ -60,8 +60,9 @@ export default {
     }
 }
 </script>-->
-  
-<script>
+
+<!-- Vue2 -->
+<!--<script>
 import { mapState, mapGetters, mapActions } from 'vuex';
 
 export default {
@@ -91,6 +92,77 @@ export default {
                 console.error(error);
             }
         }
+    }
+};
+</script>-->
+
+<!-- vue3 -->
+<script>
+import { computed, onMounted, getCurrentInstance } from 'vue'; //  Đây là cách import các hàm và hooks cần thiết từ Vue 3.
+import { useStore } from 'vuex'; //  Đây là cách import hàm useStore từ Vuex để truy cập vào store.
+
+// Common logic
+
+export default {
+    setup() { //  Đây là một hàm được sử dụng trong Composition API để cung cấp các tài nguyên và hàm cho component
+        const store = useStore(); // Sử dụng hàm useStore để lấy ra instance của Vuex store.
+        const { proxy } = getCurrentInstance(); // de dung route,  Sử dụng getCurrentInstance() để lấy ra instance hiện tại của component và thông qua proxy, chúng ta có thể truy cập vào các biến và hàm của component.
+
+        const getProduct = computed(() => { // Sử dụng computed để tạo một computed property getProduct dựa trên giá trị getter trong Vuex store.
+            return store.getters['product/getProduct']; 
+        });
+
+        const isNewProduct = computed(() => { // Sử dụng computed để tạo một computed property isNewProduct để kiểm tra xem đường dẫn hiện tại có chứa "edit" hay không.
+            return !proxy.$router.currentRoute.value.path.includes('edit');
+        });
+
+        const productData = computed(() => { // Sử dụng computed để tạo một computed property productData dựa trên giá trị state trong Vuex store.
+            return store.state.product.productData;
+        });
+
+        const fetchProduct = () => { // Định nghĩa một hàm fetchProduct để gọi action trong Vuex store để lấy dữ liệu sản phẩm.
+            store.dispatch('product/fetchProduct', proxy.$route.params.id);
+        };
+
+        const addProduct = (data) => { // Định nghĩa một hàm addProduct để gọi action trong Vuex store để thêm sản phẩm mới.
+            store.dispatch('product/addProduct', data);
+        };
+
+        const updateProduct = (payload) => { // Định nghĩa một hàm updateProduct để gọi action trong Vuex store để cập nhật thông tin sản phẩm.
+            store.dispatch('product/updateProduct', payload);
+        };
+
+        onMounted(() => { // Sử dụng onMounted để thực hiện các hành động khi component được mounted. Trong trường hợp này, nếu không phải là sản phẩm mới, sẽ gọi hàm fetchProduct để lấy thông tin sản phẩm từ server.
+            if (!isNewProduct.value) {
+                fetchProduct();
+            }
+        });
+
+        /**
+         * Định nghĩa một hàm submitForm để xử lý việc gửi form. 
+         * Nếu là sản phẩm mới, gọi hàm addProduct để thêm sản phẩm mới vào store. 
+         * Nếu là sản phẩm đã tồn tại, gọi hàm updateProduct để cập nhật thông tin sản phẩm. 
+         * Sau đó, chuyển hướng đến trang chủ ('/') và xử lý các lỗi nếu có.
+         */
+        const submitForm = () => {
+            try {
+                if (isNewProduct.value) {
+                    addProduct(productData.value);
+                } else {
+                    updateProduct({ productId: proxy.$route.params.id, product: productData.value });
+                }
+                proxy.$router.push('/');
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        return {
+            getProduct,
+            isNewProduct,
+            productData,
+            submitForm
+        };
     }
 };
 </script>

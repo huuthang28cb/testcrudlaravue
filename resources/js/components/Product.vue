@@ -1,30 +1,39 @@
 <template>
     <div>
         <h5 id="associating-form-text-with-form-controls">Name:</h5>
-        <h6>{{ product.name }}</h6>
+        <h6>{{ productData.name }}</h6>
         <h5 id="associating-form-text-with-form-controls">Description:</h5>
-        <p>{{ product.description }}</p>
+        <p>{{ productData.description }}</p>
         <h5 id="associating-form-text-with-form-controls">Price:</h5>
-        <p>Price: {{ product.price }}</p>
-        <router-link :to="`/products/${product.id}/edit`" class="btn btn-primary">Edit</router-link>
+        <p>{{ productData.price }}</p>
+        <router-link :to="`/products/${productData.id}/edit`" class="btn btn-primary">Edit</router-link>
     </div>
 </template>
 
 <script>
-import axios from 'axios';
+import { computed, onMounted, getCurrentInstance } from 'vue';
+import { useStore } from 'vuex';
 export default {
-    data() {
+    setup() {
+        const store = useStore();
+        const { proxy } = getCurrentInstance();
+
+        // const getProduct = computed(() => { 
+        //     return store.getters['product/getProduct']; 
+        // });
+        const productData = computed(() => { 
+            return store.state.product.productData;
+        });
+        const fetchProduct = () => {
+            store.dispatch('product/fetchProduct', proxy.$route.params.id);
+        };
+        onMounted(() => {
+            fetchProduct();
+        });
         return {
-            product: {}
-        }
-    },
-    async created() {
-        try {
-            const response = await axios.get(`/api/products/${this.$route.params.id}`);
-            this.product = response.data;
-        } catch (error) {
-            console.error(error);
-        }
+            // getProduct,
+            productData,
+        };
     }
-}
+};
 </script>
