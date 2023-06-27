@@ -5,17 +5,17 @@
             <div class="mb-3">
                 <label for="name" class="form-label">Name:</label>
                 <input class="form-control" type="text" id="name" v-model="product.name" />
-                <div v-if="productData.errors.name" class="text-sm text-red-600 err">{{ productData.errors.name[0] }}</div>
+                <div v-if="productData.errors && productData.errors.name" class="text-sm text-red-600 err">{{ productData.errors.name[0] }}</div>
             </div>
             <div class="mb-3">
                 <label for="description" class="form-label">Description:</label>
                 <textarea class="form-control" id="description" v-model="product.description"></textarea>
-                <div v-if="productData.errors.description" class="text-sm text-red-600 err">{{ productData.errors.description[0] }}</div>
+                <div v-if="productData.errors && productData.errors.description" class="text-sm text-red-600 err">{{ productData.errors.description[0] }}</div>
             </div>
             <div class="mb-3">
                 <label for="price" class="form-label">Price:</label>
                 <input class="form-control" type="number" id="price" v-model="product.price" />
-                <div v-if="productData.errors.price" class="text-sm text-red-600 err">{{ productData.errors.price[0] }}</div>
+                <div v-if="productData.errors && productData.errors.price" class="text-sm text-red-600 err">{{ productData.errors.price[0] }}</div>
             </div>
             <button type="submit" class="btn btn-primary">Add Product</button>
             <div v-if="isLoading">Loading...</div>
