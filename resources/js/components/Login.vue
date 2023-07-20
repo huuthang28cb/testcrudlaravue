@@ -39,7 +39,7 @@
         </div>
     </div>
 </template>
-  
+
 <!--<script>
 import { computed, onMounted, getCurrentInstance } from 'vue';
 import { useStore } from 'vuex';
@@ -136,7 +136,7 @@ export default {
 </script>-->
 <script>
 /**
- * ref được sử dụng để tạo một biến tham chiếu (reference variable) cho một giá trị. Biến tham chiếu này cũng có khả năng theo dõi (reactive) nhưng chỉ áp dụng cho giá trị của nó. 
+ * ref được sử dụng để tạo một biến tham chiếu (reference variable) cho một giá trị. Biến tham chiếu này cũng có khả năng theo dõi (reactive) nhưng chỉ áp dụng cho giá trị của nó.
  */
 import { reactive, ref } from 'vue'; // reactive: Đối tượng reactive cho phép các thuộc tính bên trong nó có khả năng theo dõi và tự động cập nhật các phụ thuộc khi có sự thay đổi
 import { useStore } from 'vuex';
@@ -159,8 +159,8 @@ export default {
             processing.value = true;
             await axios.get('/sanctum/csrf-cookie');
             try {
-                const response = await axios.post('/login', auth);
-                store.dispatch('login');
+                // const response = await axios.post('/login', auth);
+                store.dispatch('login', auth);
             } catch (error) {
                 const { response } = error;
                 if (response && response.status === 422) {

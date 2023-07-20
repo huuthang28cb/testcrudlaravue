@@ -1,25 +1,25 @@
 version: "3"
 
 services:
-  postgres:
-    container_name: postgres_container1
-    image: postgres
-    environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: password
-      PGDATA: /data/postgres
-    volumes:
-      - postgres:/data/postgres
-    ports:
-      - "5432:5432"
+#   postgres:
+#     container_name: postgres_container1
+#     image: postgres
+#     environment:
+#       POSTGRES_USER: root
+#       POSTGRES_PASSWORD: password
+#       PGDATA: /data/postgres
+#     volumes:
+#       - postgres:/data/postgres
+#     ports:
+#       - "5432:5432"
 
-    restart: unless-stopped
+#     restart: unless-stopped
 
-  adminer:
-    image: adminer
-    restart: always
-    ports:
-      - 8080:8080
+#   adminer:
+#     image: adminer
+#     restart: always
+#     ports:
+#       - 8080:8080
 
   php:
     ports:

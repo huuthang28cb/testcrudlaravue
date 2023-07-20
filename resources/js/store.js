@@ -4,11 +4,15 @@ import createPersistedState from 'vuex-persistedstate';
 import productModule from './modules/products/store/index';
 // import authModule from './modules/auth/store/index';
 import router from './routes';
+import VueCookies from 'vue-cookies'
 
 const reducer = (state) => ({
     authenticated: state.authenticated,
     user: state.user,
 });
+
+// set common token into header fetch api
+axios.defaults.headers.common['token'] = `${VueCookies.get('token')}`;
 
 const store = createStore({
     modules: {
@@ -39,12 +43,13 @@ const store = createStore({
         }
     },
     actions: {
-        login({ commit }) {
-            return axios.get('/api/user')
+        login({ commit }, auth) {
+            return axios.post('/login', auth)
                 .then(({ data }) => {
                     commit('SET_USER', data);
                     commit('SET_AUTHENTICATED', true);
-                    // localStorage.setItem('authenticated', 'true');
+                    // set cookie
+                    VueCookies.set('token', data.token, {expires: 60});
                     router.push({ name: 'home' });
                 })
                 .catch((error) => {

@@ -16,5 +16,8 @@ export default {
     },
     setLoading(state, isLoading) {
         state.isLoading = isLoading;
+    },
+    setAuthError(state, authError) {
+        state.authError = authError;
     }
 };

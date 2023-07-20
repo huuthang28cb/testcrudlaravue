@@ -1,4 +1,5 @@
 import axios from 'axios';
+import store from '../../../store';
 
 export default {
     async fetchProducts({ commit }) {
@@ -9,6 +10,9 @@ export default {
             commit('setProducts', response.data);
         } catch (error) {
             console.error(error);
+            if (error.response && error.response.data.body[0] == "C_E_005") {
+                store.state.authenticated = false
+            }
         } finally {
             commit('setLoading', false);
         }
