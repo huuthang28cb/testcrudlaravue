@@ -43,7 +43,29 @@ import store from './store'; // Import Vuex store
 import { createApp } from 'vue';
 import App from './components/App.vue';
 
+// Định nghĩa hàm kiểm tra lỗi C_E_005
+function isC_E_005Error(error) {
+    return error.response && error.response.data.body[0] === "C_E_005";
+}
+
+// Định nghĩa hàm xử lý lỗi toàn cục
+function handleGlobalError(error) {
+    console.error(error, 'aaaaaaaaaaaai');
+    if (isC_E_005Error(error)) {
+        // store.state.authenticated = false;
+        // Hoặc bạn có thể xử lý lỗi ở đây theo ý muốn
+        // Ví dụ: thông báo lỗi, redirect, vv.
+        return;
+    }
+    // Xử lý các lỗi khác theo ý muốn
+    // ...
+}
+
 const app = createApp(App);
+
+// Đăng ký handleGlobalError vào app.config.globalProperties
+app.config.globalProperties.$handleGlobalError = handleGlobalError;
+
 app.use(router);
 app.use(store);
 app.mount('#app');

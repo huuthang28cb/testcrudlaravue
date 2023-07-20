@@ -1,6 +1,22 @@
 import axios from 'axios';
 import store from '../../../store';
 
+// Định nghĩa hàm kiểm tra lỗi C_E_005
+function isC_E_005Error(error) {
+    return error.response && error.response.data.body[0] === "C_E_005";
+}
+
+// Định nghĩa hàm xử lý lỗi toàn cục
+function handleGlobalError(error) {
+    console.error(error, 'aaaaaaaaaaa');
+    if (isC_E_005Error(error)) {
+        store.state.authenticated = false;
+        return;
+    }
+    // Nếu không phải lỗi C_E_005, xử lý lỗi theo ý muốn
+    // ...
+}
+
 export default {
     async fetchProducts({ commit }) {
         try {
@@ -9,10 +25,7 @@ export default {
             const response = await axios.get('/api/products');
             commit('setProducts', response.data);
         } catch (error) {
-            console.error(error);
-            if (error.response && error.response.data.body[0] == "C_E_005") {
-                store.state.authenticated = false
-            }
+            handleGlobalError(error)
         } finally {
             commit('setLoading', false);
         }

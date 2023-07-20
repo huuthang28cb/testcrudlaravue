@@ -27,7 +27,7 @@ class CheckToken
                 $token = $request->header('token');
             }
             $t = JWTAuth::getJWTProvider()->decode($token);
-            
+
             // $user = JWTAuth::setToken($token)->toUser();
             // JWTAuth::authenticate();
 

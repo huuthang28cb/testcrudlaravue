@@ -46,10 +46,15 @@ const store = createStore({
         login({ commit }, auth) {
             return axios.post('/login', auth)
                 .then(({ data }) => {
+                    return new Promise((resolve, reject) => {
+                        VueCookies.set('token', data.token, { expires: 60 });
+                        resolve(data);
+                        window.location.reload();
+                    });
+                })
+                .then((data) => {
                     commit('SET_USER', data);
                     commit('SET_AUTHENTICATED', true);
-                    // set cookie
-                    VueCookies.set('token', data.token, {expires: 60});
                     router.push({ name: 'home' });
                 })
                 .catch((error) => {

@@ -7,6 +7,6 @@ export default {
         price: 0,
         errors: {}
     },
-    authError: false,
+    error: null,
     isLoading: false
 };
