@@ -22,7 +22,7 @@
         </form>
     </div>
 </template>
-  
+
   <!--<script>
 import axios from 'axios';
 export default {
@@ -126,10 +126,12 @@ export default {
 
         const message = computed(() => store.state.product.message);
         const productData = computed(() => store.state.product.productData);
+        console.log(productData)
         const isLoading = computed(() => store.state.product.isLoading);
 
         const addProduct = async () => {
             try {
+                await axios.get('/sanctum/csrf-cookie');
                 const re = await store.dispatch('product/addProduct', product);
                 if (re) {
                     Swal.fire({

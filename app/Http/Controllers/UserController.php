@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LoginRequest;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -11,7 +12,7 @@ use Tymon\JWTAuth\Facades\JWTFactory;
 
 class UserController extends Controller
 {
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
         $loginUser                = null;
         $userInfo                 = [];

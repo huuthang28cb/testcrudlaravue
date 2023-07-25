@@ -8,7 +8,7 @@ import VueCookies from 'vue-cookies'
 
 const reducer = (state) => ({
     authenticated: state.authenticated,
-    user: state.user,
+    // user: state.user,
 });
 
 // set common token into header fetch api
@@ -24,7 +24,10 @@ const store = createStore({
     state: {
         authenticated: false,
         user: {},
-        sessionExpiration: null,
+        errors: {
+            email: '',
+            password: ''
+        },
     },
     getters: {
         authenticated(state) {
@@ -40,28 +43,24 @@ const store = createStore({
         },
         SET_USER(state, value) {
             state.user = value
+        },
+        SET_ERROR(state, value) {
+            state.errors = value
         }
     },
     actions: {
-        login({ commit }, auth) {
-            return axios.post('/login', auth)
-                .then(({ data }) => {
-                    return new Promise((resolve, reject) => {
-                        VueCookies.set('token', data.token, { expires: 60 });
-                        resolve(data);
-                        window.location.reload();
-                    });
-                })
-                .then((data) => {
-                    commit('SET_USER', data);
-                    commit('SET_AUTHENTICATED', true);
-                    router.push({ name: 'home' });
-                })
-                .catch((error) => {
-                    commit('SET_USER', {});
-                    commit('SET_AUTHENTICATED', false);
-                    console.error(error);
-                });
+        async login({ commit }, auth) {
+            try {
+                var data = await axios.post('/login', auth);
+                await VueCookies.set('token', data.data.token, { expires: 60 });
+                commit('SET_USER', data.data);
+                commit('SET_AUTHENTICATED', true);
+                window.location.reload();
+                router.push({ name: 'home' });
+            } catch (error) {
+                // commit('SET_USER', {});
+                // commit('SET_AUTHENTICATED', false);
+            }
         },
         logout({ commit }) {
             commit('SET_USER', {})

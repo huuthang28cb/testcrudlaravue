@@ -17,10 +17,12 @@
                             <div class="form-group col-12">
                                 <label for="email" class="font-weight-bold">Email</label>
                                 <input type="text" v-model="auth.email" name="email" id="email" class="form-control" />
+                                <p v-if="error && error.email" class="text-danger">{{ error.email }}</p>
                             </div>
                             <div class="form-group col-12 my-2">
                                 <label for="password" class="font-weight-bold">Password</label>
                                 <input type="password" v-model="auth.password" name="password" id="password" class="form-control" />
+                                <p v-if="error && error.password" class="text-danger">{{ error.password }}</p>
                             </div>
                             <div class="col-12 mb-2">
                                 <button :disabled="processing" @click="login" class="btn btn-primary btn-block">
@@ -138,7 +140,7 @@ export default {
 /**
  * ref được sử dụng để tạo một biến tham chiếu (reference variable) cho một giá trị. Biến tham chiếu này cũng có khả năng theo dõi (reactive) nhưng chỉ áp dụng cho giá trị của nó.
  */
-import { reactive, ref } from 'vue'; // reactive: Đối tượng reactive cho phép các thuộc tính bên trong nó có khả năng theo dõi và tự động cập nhật các phụ thuộc khi có sự thay đổi
+import { computed, reactive, ref } from 'vue'; // reactive: Đối tượng reactive cho phép các thuộc tính bên trong nó có khả năng theo dõi và tự động cập nhật các phụ thuộc khi có sự thay đổi
 import { useStore } from 'vuex';
 import axios from 'axios';
 
@@ -154,24 +156,12 @@ export default {
 
         const validationErrors = ref({});
         const processing = ref(false);
+        const error = computed(() =>  store.state.errors);
 
         const login = async () => {
-            processing.value = true;
+            processing.value = false;
             await axios.get('/sanctum/csrf-cookie');
-            try {
-                // const response = await axios.post('/login', auth);
-                store.dispatch('login', auth);
-            } catch (error) {
-                const { response } = error;
-                if (response && response.status === 422) {
-                    validationErrors.value = response.data.errors;
-                } else {
-                    validationErrors.value = {};
-                    alert(response.data.message);
-                }
-            } finally {
-                processing.value = false;
-            }
+            store.dispatch('login', auth);
         };
 
         return {
@@ -179,6 +169,7 @@ export default {
             validationErrors,
             processing,
             login,
+            error
         };
     },
 };
